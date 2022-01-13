@@ -1,21 +1,45 @@
 const express = require('express');
+const morgan = require('morgan');
 
+// express app
 const app = express();
 
-app.listen(3000)
+// listen for requests
+app.listen(3000);
 
-app.get('/', function (req, res) {
-    res.sendFile('./views/index.html', { root: __dirname })
-  })
+// register view engine
+app.set('view engine', 'ejs');
 
-app.get('/about', function (req, res) {
-    res.sendFile('./views/about.html', { root: __dirname })
+app.use((req, res, next) => {
+    console.log(req.cookies)
+    console.log(req.hostname)
+    // console.log(req.headers)
+    next()
 })
 
-app.get('/about-us', (req, res) => {
-    res.redirect('/about')
-})
+app.get('/', (req, res) => {
+  const blogs = [
+    {title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+    {title: 'Mario finds stars', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+    {title: 'How to defeat bowser', snippet: 'Lorem ipsum dolor sit amet consectetur'},
+  ];
+  res.render('index', { title: 'Home', blogs });
+});
 
+app.get('/about', (req, res) => {
+  res.render('about', { title: 'About' });
+});
+
+app.get('/blogs/create', (req, res) => {
+  res.render('create', { title: 'Create a new blog' });
+});
+
+
+
+
+
+
+// 404 page
 app.use((req, res) => {
-    res.status(404).sendFile('./views/404.html', { root: __dirname })
-})
+  res.status(404).render('404', { title: '404' });
+});
